@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>SkinLog テスト協力者の登録</title>
+<style>
+  body {
+    margin: 0;
+    padding: 32px 24px;
+    background: #FDFCFB;
+    color: #2B2422;
+    font-family: -apple-system, "Hiragino Sans", sans-serif;
+    line-height: 1.9;
+  }
+  main { max-width: 480px; margin: 0 auto; }
+  h1 { font-size: 22px; }
+  p { font-size: 16px; }
+  .note { color: #8A7F79; font-size: 13px; }
+  .button {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 56px;
+    padding: 16px;
+    margin: 28px 0 12px;
+    border-radius: 18px;
+    background: #D9AFA2;
+    color: #2B2422;
+    font-size: 17px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+  }
+  .steps { background: #F6F2EF; border-radius: 18px; padding: 16px 20px; font-size: 15px; }
+  #invalid { display: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>SkinLog テスト協力者の登録</h1>
+  <div id="ok">
+    <p>テストに協力してくださり、ありがとうございます。下のボタンを押すと SkinLog が開き、ずっと無料・制限なしで使えるようになります。</p>
+    <div class="steps">
+      先に、招待メールの案内どおり TestFlight から SkinLog をインストールしておいてください。ボタンを押して「"SkinLog"で開きますか?」と出たら「開く」を選びます。
+    </div>
+    <a class="button" id="open" href="#">SkinLog で登録する</a>
+    <p class="note">ボタンで開かないときは、SkinLog の設定タブ →「料金と約束」から、案内メールに書かれたコードを入力しても登録できます。</p>
+  </div>
+  <div id="invalid">
+    <p>このページは、お渡しした案内のリンクから開いてください。リンクの後ろに登録用のコードが付いています。</p>
+  </div>
+</main>
+<script>
+  // 登録コードはページには置かず、案内リンクの「#」の後ろから受け取る。
+  // 例: https://.../tester/#SKINLOG-XXXX → skinlog://redeem?code=SKINLOG-XXXX
+  var code = decodeURIComponent((location.hash || '').slice(1)).trim();
+  if (code) {
+    document.getElementById('open').href = 'skinlog://redeem?code=' + encodeURIComponent(code);
+  } else {
+    document.getElementById('ok').style.display = 'none';
+    document.getElementById('invalid').style.display = 'block';
+  }
+</script>
+</body>
+</html>
