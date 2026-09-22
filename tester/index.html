@@ -34,18 +34,27 @@
     text-decoration: none;
   }
   .steps { background: #F6F2EF; border-radius: 18px; padding: 16px 20px; font-size: 15px; }
-  #invalid { display: none; }
+  .warn { background: #EFE2DC; border-radius: 18px; padding: 16px 20px; font-size: 15px; margin-bottom: 16px; }
+  #invalid, #inapp, #stuck { display: none; }
 </style>
 </head>
 <body>
 <main>
   <h1>SkinLog テスト協力者の登録</h1>
+  <div id="inapp" class="warn">
+    いま、LINEなどのアプリの中のブラウザで開いています。この中では登録ボタンが動きません。<br>
+    <strong>右下の「…」→「デフォルトのブラウザで開く」(または「Safariで開く」)</strong>を押してから、あらためてボタンを押してください。
+  </div>
   <div id="ok">
     <p>テストに協力してくださり、ありがとうございます。下のボタンを押すと SkinLog が開き、ずっと無料・制限なしで使えるようになります。</p>
     <div class="steps">
       先に、招待メールの案内どおり TestFlight から SkinLog をインストールしておいてください。ボタンを押して「"SkinLog"で開きますか?」と出たら「開く」を選びます。
     </div>
     <a class="button" id="open" href="#">SkinLog で登録する</a>
+    <div id="stuck" class="warn">
+      開かないときは: ① TestFlight で SkinLog を最新版にアップデートしたか確認 →
+      ② このページを Safari で開き直してから、もう一度ボタンを押してください。
+    </div>
     <p class="note">ボタンで開かないときは、SkinLog の設定タブ →「料金と約束」から、案内メールに書かれたコードを入力しても登録できます。</p>
   </div>
   <div id="invalid">
@@ -62,6 +71,24 @@
     document.getElementById('ok').style.display = 'none';
     document.getElementById('invalid').style.display = 'block';
   }
+
+  // LINE等のアプリ内ブラウザは skinlog:// を開けない(「アドレスが無効です」になる)。
+  // LINEには「?openExternalBrowser=1 付きのURLはSafariで開く」公式の仕組みがあるので、
+  // まずそれで自動的に外へ出す。出られなかった場合は上の案内を表示する。
+  var ua = navigator.userAgent || '';
+  var inApp = / Line\//i.test(ua) || /Instagram|FBAN|FBAV/i.test(ua);
+  if (inApp && !/openExternalBrowser=1/.test(location.search)) {
+    location.replace(location.pathname + '?openExternalBrowser=1' + location.hash);
+  } else if (inApp) {
+    document.getElementById('inapp').style.display = 'block';
+  }
+
+  // ボタンを押してもアプリが開かなかった(=このページが表示されたまま)ときの案内。
+  document.getElementById('open').addEventListener('click', function () {
+    setTimeout(function () {
+      if (!document.hidden) document.getElementById('stuck').style.display = 'block';
+    }, 2000);
+  });
 </script>
 </body>
 </html>
